@@ -20,6 +20,7 @@
 					<li><a href="?pag=produto">Produtos</a></li>
 					<li><a href="?pag=servico">Serviços</a></li>
 					<li><a href="?pag=contato">Contato</a></li>
+					<li><a href="?pag=busca">Busca</a></li>
 				</ul>
 			</nav>
 		</section>

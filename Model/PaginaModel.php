@@ -36,4 +36,13 @@
 			return $this->select($strQuery);
 		}
 
+		public function getByConteudoContainsFrase($strFrase = null)
+		{
+			if($strFrase === null)
+				return;
+
+			$strQuery = "SELECT * FROM $this->strTable where dsc_conteudo_pagina LIKE '%$strFrase%'";
+
+			return $this->select($strQuery);
+		}
 	}
