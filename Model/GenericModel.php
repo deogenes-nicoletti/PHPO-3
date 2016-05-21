@@ -53,11 +53,37 @@
 			return $rs;
 		}
 
+		//EM TESTES
+		public function selectDemo($strQuery = null, $param = null)
+		{
+			$objTeste = new Query();
+			$objTeste->objResult = $this->select($strQuery, $param);
+			return $objTeste;
+		}
+
 		public function execute($strQuery = null)
 		{
 			$query = $this->conn->prepare($strQuery);
 
 			//Executing query
 			$query->execute();
+		}
+	}
+
+	//Futuramente pode ser uma classe auxiliar de consultas
+	class Query
+	{
+		protected $objResult;
+
+		public function get(){
+			return $this->objResult;
+		}
+
+		public function first()
+		{
+			if(is_array($objResult) && sizeof($objResult) > 0)
+				return $objResult[0];
+			else
+				return $objResult;
 		}
 	}

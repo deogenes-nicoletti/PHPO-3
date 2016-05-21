@@ -20,9 +20,10 @@
 				return empty($_GET[$strKey]);
 		}
 
-		public function get($strKey, $strProtocol = 'POST')
+		public function get($strKey = '', $strProtocol = 'POST')
 		{
-			switch ($strProtocol) {
+			switch ($strProtocol)
+			{
 				case 'POST':
 					return isset($_POST[$strKey]) ? $_POST[$strKey] : null;
 					break;

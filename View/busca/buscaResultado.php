@@ -6,6 +6,7 @@
 	}
 
 echo sizeof($arrResult);
+
 ?>
  </strong> Paginas encontradas para seu termo: 
 <br><br>

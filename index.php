@@ -4,11 +4,5 @@
 	
 	use Core\Route;
 
-	$arrPage = Route::route();
-
-	//use Fixtures\Fixture;
-
-	//$objFixture = new Fixture();
-
-	//$objFixture->criarTabela();
-	//$objFixture->inserirDados();
+	Route::staticRoute('fixtures', 'Fixtures');
+	Route::route();

@@ -7,8 +7,7 @@
 	{
 			private static $paginaModel;
 			private static $genericController;
-			//private static $response_code;
-			//private static $request_file;
+			private static $arrRotasEstaticas;
 
 			public static function init()
 			{
@@ -58,8 +57,24 @@
 
 				if($strFileTmp == null)
 				{
-					$arrRoute['header']['response_code'] = 404;
-					$arrRoute['header']['request_file'] .= "404.php";
+					foreach (self::$arrRotasEstaticas as $key => $objRotaEstatica)
+					{
+						if($strUrlParam == $objRotaEstatica['dsc_lnk_page'])
+						{
+							$strFileTmp = $arrRoute['header']['request_file'] . $objRotaEstatica['source_page'].'.php';
+							break;
+						}
+					}
+
+					if(file_exists($strFileTmp) == false)
+					{
+						$arrRoute['header']['response_code'] = 404;
+						$arrRoute['header']['request_file'] .= "404.php";
+					}
+					else
+					{
+						$arrRoute['header']['request_file'] = $strFileTmp;
+					}
 				}
 				else
 				{
@@ -69,5 +84,12 @@
 
 				//Loading layout
 				require_once(LAYOUT_SRC . 'layout-1.php');
+			}
+
+			public static function staticRoute($strRota = null, $strCaminho = null){
+				if($strRota === null || file_exists($strCaminho))
+					return;
+
+				self:: $arrRotasEstaticas[] = ['dsc_lnk_page' => $strRota, 'source_page' => $strCaminho];
 			}
 	}
