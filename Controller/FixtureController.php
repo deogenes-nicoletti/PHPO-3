@@ -2,6 +2,7 @@
 	namespace Controller;
 
 	use Utils\RequestsUtils;
+	use Utils\NotificationUtils;
 	
 	use Model\PaginaModel;
 	use Model\FixtureModel;
@@ -11,12 +12,14 @@
 		private $objPaginaModel;
 		private $objRequestsUtils;
 		private $objFixtureModel;
+		private $objNotificationUtils;
 
 		public function __construct()
 		{
 			$this->objPaginaModel = new PaginaModel();
 			$this->objRequestsUtils = new RequestsUtils();
 			$this->objFixtureModel = new FixtureModel();
+			$this->objNotificationUtils  = new NotificationUtils();
 
 			//Inicia rotinas
 			$strParamFixture = $this->objRequestsUtils->get('fixture', 'GET');
@@ -46,5 +49,7 @@
 			foreach ($arrFixturesRegistradas as $key => $strMetodo)
 				if($strFixture === $key)
 					call_user_func_array([$this->objFixtureModel, $strMetodo], []);
+
+			$this->objNotificationUtils->notificateToBrowser('', 'Sucesso ao processar sua solicitação');
 		}
 	}
