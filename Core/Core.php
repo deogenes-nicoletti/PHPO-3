@@ -1,49 +1,50 @@
 <?php
+	session_start();
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL);
+	
 	define('PAGES_SRC', 'View/');
 	define('LAYOUT_SRC', PAGES_SRC . 'layout/');
+	define('CORE_STORAGE', 'Core/Storage/');
+	define('CORE_STORAGE_VIEW', CORE_STORAGE . 'View/');
+	define('CORE_STORAGE_DATABASE', CORE_STORAGE . 'Database/');
 
 	define('PDO_NOT_DATABASE_EXISTS', 1049);
 
 	use Core\Route;
+	use Core\Helper\ResourceHelper;
 
 	/*
 	*@date 21/03/2016
 	*@return
 	*@description AUTOLOAD CLASSES
 	*/
-	function __autoload($strClass)
-	{
+	spl_autoload_register(function ($strClass){
+		$strClass = preg_replace(["/\\\/"], "/", $strClass);
+		;
 		if(file_exists($strClass . '.php'))
 			require_once($strClass . '.php');
+		else
+			echo $strClass.".php";
+	});
+
+	function loadConfig($strKey)
+	{
+		$arr = require("Config.php");
+		return $arr[$strKey];
 	}
 
-	/*
-	*@date 21/05/2016
-	*@return
-	*@description CARREGA UMA VIEW PASSANDO PARAMETROS (Em testes)
-	*/
-	function loadView($strView = '', $arrParams = null)
+	function url($strParam = null)
 	{
-		$arrExtensoesDefault = ['.php', '.html'];
-		
-		$strCaminhoFinal = null;
+		$objResource = new ResourceHelper();
+		$strHost = $objResource->getHost();
+		$strApelidoRota = loadConfig('ROTA_APELIDO');
 
-		foreach ($arrExtensoesDefault as $key => $strExtensao)
-			if(file_exists(PAGES_SRC.$strView.$strExtensao)){
-				$strCaminhoFinal = PAGES_SRC.$strView.$strExtensao;
-				break;
-			}
+		if($strApelidoRota != '')
+			$strHost .= "/".$strApelidoRota;
 
-		if($strCaminhoFinal === null)
-			$strCaminhoFinal = PAGES_SRC.$strView;
-
-		if($arrParams !== null && is_array($arrParams))
-			extract($arrParams);
-
-		if(file_exists($strCaminhoFinal) == false)
-			fatalError('Arquivo: '.$strCaminhoFinal.' não existe');
-
-		require_once($strCaminhoFinal);
+		return $strHost.$strParam;
 	}
 
 	/*

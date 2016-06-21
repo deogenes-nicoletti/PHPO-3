@@ -1,13 +1,15 @@
 <?php
 	namespace Controller;
 
+	use Core\System\GenericClassSystem;
+
 	use Utils\RequestsUtils;
 	use Utils\NotificationUtils;
 	
 	use Model\PaginaModel;
 	use Model\FixtureModel;
 
-	class FixtureController
+	class FixtureController extends GenericClassSystem
 	{
 		private $objPaginaModel;
 		private $objRequestsUtils;
@@ -16,40 +18,22 @@
 
 		public function __construct()
 		{
-			$this->objPaginaModel = new PaginaModel();
-			$this->objRequestsUtils = new RequestsUtils();
 			$this->objFixtureModel = new FixtureModel();
-			$this->objNotificationUtils  = new NotificationUtils();
-
-			//Inicia rotinas
-			$strParamFixture = $this->objRequestsUtils->get('fixture', 'GET');
-
-			if($strParamFixture === null)
-				$this->index();
-			else
-				$this->executar($strParamFixture);
 		}
 
-		public function index()
+		public function index($strFixture = null)
 		{
-			$strDscLink = $this->objRequestsUtils->get('pag', 'GET');
-			$arrConteudoPagina = $this->objPaginaModel->getByDscLinkPagina($strDscLink);
+			$boolExibirLinkAcoes = $strFixture === null ? true : false;
 
-			foreach ($arrConteudoPagina as $key => $objConteudo)
-				echo $objConteudo['dsc_conteudo_pagina'];
+			if($strFixture !== null)
+				$this->executar();
 
-			loadView('fixtures/lstFixtures');
+			$this->TemplateHelper()->loadView('fixtures/fixture', ['boolExibirLinkAcoes' => $boolExibirLinkAcoes]);
 		}
 
-		private function executar($strFixture)
+		private function executar()
 		{
-			//Executando fixture
-			$arrFixturesRegistradas = ['dados' => 'inserirDados', 'banco' => 'criarBanco', 'tabelas' => 'criarTabela'];
-
-			foreach ($arrFixturesRegistradas as $key => $strMetodo)
-				if($strFixture === $key)
-					call_user_func_array([$this->objFixtureModel, $strMetodo], []);
-
-			$this->objNotificationUtils->notificateToBrowser('', 'Sucesso ao processar sua solicitação');
+			//Disparando rotinas
+			return $this->objFixtureModel->inserirDados();
 		}
 	}

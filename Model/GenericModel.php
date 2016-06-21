@@ -1,11 +1,17 @@
 <?php
 	namespace Model;
 
+	use Core\Helper\FileHelper;
+	use Core\Helper\ResourceHelper;
+
 	class GenericModel
 	{
 		private $strBanco = "mysql";
-		private $strHost  = "localhost";
+		//private $strSchema = "u429838172_progs";
+		//private $strUser = "u429838172_deoge";
+		//private $strPwd = "deogeness";
 		private $strSchema = "code_education";
+		private $strHost  = "localhost";
 		private $strUser = "root";
 		private $strPwd = "";
 
@@ -17,12 +23,22 @@
 				$this->conn = new \PDO("$this->strBanco:host=$this->strHost;dbname=$this->strSchema", $this->strUser, $this->strPwd);
 			}
 			catch(\PDOException $e){
-				
-				if($e->getCode() == PDO_NOT_DATABASE_EXISTS)
-					$this->conn = new \PDO("$this->strBanco:host=$this->strHost", $this->strUser, $this->strPwd);					
+				if($e->getCode() == PDO_NOT_DATABASE_EXISTS){
+					$this->conn = new \PDO("$this->strBanco:host=$this->strHost", $this->strUser, $this->strPwd);
+					$this->avisoFixture();
+				}
 				else
 					die("ERRO: " . $e->getMessage());
 			}
+		}
+
+		private function avisoFixture()
+		{
+			$objFileHelper = new FileHelper();
+			$objResourceHelper = new ResourceHelper();
+
+			if($objResourceHelper->getController() != 'fixtures')
+				die($objFileHelper->incluir(PAGES_SRC."fixture.php"));
 		}
 
 		public function __destruct()
@@ -42,7 +58,8 @@
 				$param = [ $param ];
 
 			for($i = 0; $i < sizeof($param); ++$i)
-				$this->conn->bindValue($i -1, $param[$i]);
+				//$this->conn->bindValue($i -1, $param[$i]);
+				$query->bindParam($i + 1, $param[$i]);
 
 			//Execute
 			$query->execute();
